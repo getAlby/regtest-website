@@ -103,4 +103,4 @@ app.set("view engine", "ejs");
 
 const port = process.env.PORT || 3030;
 console.log(`Running on ${port}`);
-app.listen(process.env.PORT);
+app.listen(port);
