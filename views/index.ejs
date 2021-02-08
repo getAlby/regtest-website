@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>402</title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+
+
+    <pre><a href="lightning:<%= invoice.payment_request %>">lnbtc...</a></pre>
+    <textarea>
+      <%= invoice.payment_request %>
+    </textarea>
+    <button onclick="pay();">Pay</button>
+    <script
+      src="https://unpkg.com/webln@0.2.0/dist/webln.min.js"
+      integrity="sha384-mTReBqbhPO7ljQeIoFaD1NYS2KiYMwFJhUNpdwLj+VIuhhjvHQlZ1XpwzAvd93nQ"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+
+    function pay() {
+      if(!this.webln) {
+        return;
+      }
+      WebLN.requestProvider()
+          .then(function(webln) {
+            return webln.sendPayment('<%= invoice.payment_request %>')
+              .then(function(r) {
+                alert("Thanks!");
+                console.log('done', r);
+              })
+              .catch(function(e) {
+                alert("Failed, check console");
+                console.log('err', e);
+              });
+        })
+        .catch(function(e) {
+          alert("Webln error, check console");
+          console.log('err, provider', e);
+        });
+    }
+
+    /*
+    window.addEventListener('DOMContentLoaded', function(event) {
+      window.setTimeout(function() {
+
+        WebLN.requestProvider()
+          .then(function(webln) {
+            return webln.sendPayment('<%= invoice.payment_request %>')
+              .then(function(r) {
+                console.log('done', r);
+              })
+              .catch(function(e) {
+                console.log('err', e);
+              });
+        })
+        .catch(function(e) { console.log('err, provider', e) });
+
+      }, 300);
+    });
+    */
+    </script>
+
+
+  </body>
+</html>
