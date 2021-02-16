@@ -12,6 +12,9 @@
       <%= invoice.payment_request %>
     </textarea>
     <button onclick="pay();">Pay</button>
+
+    <div id="content"></div>
+
     <script
       src="https://unpkg.com/webln@0.2.0/dist/webln.min.js"
       integrity="sha384-mTReBqbhPO7ljQeIoFaD1NYS2KiYMwFJhUNpdwLj+VIuhhjvHQlZ1XpwzAvd93nQ"
@@ -27,11 +30,11 @@
           .then(function(webln) {
             return webln.sendPayment('<%= invoice.payment_request %>')
               .then(function(r) {
-                alert("Thanks!");
+                document.getElementById('content').innerHTML = "YAY, thanks!";
                 console.log('done', r);
               })
               .catch(function(e) {
-                alert("Failed, check console");
+                alert("Failed: " + e.message);
                 console.log('err', e);
               });
         })
