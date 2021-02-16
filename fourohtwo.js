@@ -98,6 +98,11 @@ app.get("/", async function (req, res) {
   res.render("index", { invoice: invoice.data });
 });
 
+app.post("/invoice", async function (req, res) {
+  const invoice = await lnd.makeInvoice({ amount: 100, memo: "a402" });
+  res.json({ payment_request: invoice.payment_request });
+});
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
