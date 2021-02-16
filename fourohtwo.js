@@ -100,7 +100,7 @@ app.get("/", async function (req, res) {
 
 app.post("/invoice", async function (req, res) {
   const invoice = await lnd.makeInvoice({ amount: 100, memo: "a402" });
-  res.json({ payment_request: invoice.payment_request });
+  res.json({ payment_request: invoice.data.payment_request });
 });
 
 app.set("views", path.join(__dirname, "views"));
