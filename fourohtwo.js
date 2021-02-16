@@ -1,5 +1,6 @@
 const path = require("path");
 const express = require("express");
+var cors = require("cors");
 const nodeFetch = require("node-fetch");
 
 class Lnd {
@@ -93,6 +94,8 @@ lnd = new Lnd({
 lnd.getInfo().then(console.log);
 
 const app = express();
+app.use(cors());
+
 app.get("/", async function (req, res) {
   const invoice = await lnd.makeInvoice({ amount: 100, memo: "a402" });
   res.render("index", { invoice: invoice.data });
