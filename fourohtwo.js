@@ -1,7 +1,10 @@
 const path = require("path");
 const express = require("express");
-var cors = require("cors");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const { boltwall, TIME_CAVEAT_CONFIGS } = require("boltwall");
 const nodeFetch = require("node-fetch");
+require("dotenv").config();
 
 class Lnd {
   constructor(config) {
@@ -88,26 +91,54 @@ class Lnd {
 
 lnd = new Lnd({
   url: process.env.LND_URL,
-  macaroon: process.env.LND_MACAROON,
+  macaroon: process.env.LND_MACAROON_HEX,
 });
 
 lnd.getInfo().then(console.log);
 
 const app = express();
-app.use(cors());
+const lsatRouter = express.Router();
+const appRouter = express.Router();
 
-app.get("/", async function (req, res) {
+appRouter.get("/", async function (req, res) {
   const invoice = await lnd.makeInvoice({ amount: 100, memo: "a402" });
-  res.render("index", { invoice: invoice.data });
+  res.render("index", { invoice: invoice.data, headers: req.headers });
 });
 
-app.post("/invoice", async function (req, res) {
+appRouter.post("/invoice", async function (req, res) {
   const invoice = await lnd.makeInvoice({ amount: 100, memo: "a402" });
   res.json({ payment_request: invoice.data.payment_request });
 });
 
+appRouter.get("/webamp", function (req, res) {
+  res.render("webamp", {});
+});
+
+lsatRouter.get("/", function (req, res) {
+  res.json("yay, thanks");
+});
+
+lsatRouter.get("/files/:name", function (req, res) {
+  let options = {
+    root: path.join(__dirname, "public"),
+    dotfiles: "deny",
+    headers: {
+      "x-timestamp": Date.now(),
+      "x-sent": true,
+    },
+  };
+
+  const fileName = req.params.name;
+  res.sendFile(fileName, options);
+});
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use("/lsat", boltwall({ ...TIME_CAVEAT_CONFIGS, rate: 10 }), lsatRouter);
+app.use("/", appRouter);
 
 const port = process.env.PORT || 3030;
 console.log(`Running on ${port}`);

@@ -3,6 +3,7 @@
   <head>
     <title>402</title>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css">
   </head>
   <body>
 
@@ -14,6 +15,12 @@
     <button onclick="pay();">Pay</button>
 
     <div id="content"></div>
+
+
+    <div id="headers">
+      <h5>Request headers:</h3>
+      <%= JSON.stringify(headers) %>
+    </div>
 
     <script
       src="https://unpkg.com/webln@0.2.0/dist/webln.min.js"
