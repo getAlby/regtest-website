@@ -137,7 +137,7 @@ app.set("view engine", "ejs");
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use("/lsat", boltwall({ ...TIME_CAVEAT_CONFIGS, rate: 10 }), lsatRouter);
+app.use("/lsat", boltwall({ ...TIME_CAVEAT_CONFIGS, rate: 0.1 }), lsatRouter);
 app.use("/", appRouter);
 
 const port = process.env.PORT || 3030;
