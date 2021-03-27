@@ -12,6 +12,11 @@
     <textarea>
       <%= invoice.payment_request %>
     </textarea>
+
+    <button onclick="enable();">Enable</button>
+    <div id="getinfo"></div>
+    <hr>
+
     <button onclick="pay();">Pay</button>
 
     <div id="content"></div>
@@ -29,6 +34,21 @@
     ></script>
     <script>
 
+    function enable() {
+      if(!this.webln) {
+        return;
+      }
+      WebLN.requestProvider().then(function(webln) {
+        webln.getInfo().then(function(info) {
+          document.getElementById('getinfo').innerHTML = JSON.stringify(info);
+        });
+      })
+      .catch(function(e) {
+        alert("Failed: " + e.message);
+        console.log('error enable:', e);
+      });
+
+    }
     function pay() {
       if(!this.webln) {
         return;
@@ -42,7 +62,7 @@
               })
               .catch(function(e) {
                 alert("Failed: " + e.message);
-                console.log('err', e);
+                console.log('err pay:', e);
               });
         })
         .catch(function(e) {
