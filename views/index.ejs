@@ -22,6 +22,20 @@
     <div id="content"></div>
 
 
+    <hr>
+
+    <pre><code>
+WebLN.requestProvider().then(function(webln) {
+  webln.getInfo().then(function(info) {
+    console.log(info);
+  });
+
+  webln.sendPayment('<%= invoice.payment_request %>');
+});
+
+    </code></pre>
+
+    <hr>
     <div id="headers">
       <h5>Request headers:</h3>
       <%= JSON.stringify(headers) %>
