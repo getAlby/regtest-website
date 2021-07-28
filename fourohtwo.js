@@ -125,6 +125,7 @@ appRouter.get('/logout', function(req, res) {
 
 appRouter.get('/login',
 	function(req, res, next) {
+    console.log('request user', req.user);
 		if (req.user) {
 			// Already authenticated.
 			return res.redirect('/');
@@ -183,6 +184,8 @@ passport.use(new LnurlAuth.Strategy(function(linkingPublicKey, done) {
 		user = { id: linkingPublicKey };
 		map.user.set(linkingPublicKey, user);
 	}
+
+  console.log(user);
 	done(null, user);
 }));
 
