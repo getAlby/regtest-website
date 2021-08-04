@@ -65,7 +65,7 @@ WebLN.requestProvider().then(function(webln) {
     </div>
 
     <script
-      src="https://unpkg.com/webln@0.2.0/dist/webln.min.js"
+      src="https://unpkg.com/webln@0.2.2/dist/webln.min.js"
       integrity="sha384-mTReBqbhPO7ljQeIoFaD1NYS2KiYMwFJhUNpdwLj+VIuhhjvHQlZ1XpwzAvd93nQ"
       crossorigin="anonymous"
     ></script>
@@ -108,25 +108,16 @@ WebLN.requestProvider().then(function(webln) {
         });
     }
 
-    /*
     window.addEventListener('DOMContentLoaded', function(event) {
       window.setTimeout(function() {
 
-        WebLN.requestProvider()
-          .then(function(webln) {
-            return webln.sendPayment('<%= invoice.payment_request %>')
-              .then(function(r) {
-                console.log('done', r);
-              })
-              .catch(function(e) {
-                console.log('err', e);
-              });
+        WebLN.requestProvider().then(webln => {
+          console.log('-- webln found');
         })
-        .catch(function(e) { console.log('err, provider', e) });
+        .catch(function(e) { console.log('-- requesting webln failed', e) });
 
       }, 300);
     });
-    */
     </script>
 
 
