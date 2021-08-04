@@ -64,8 +64,8 @@ WebLN.requestProvider().then(function(webln) {
       <%= JSON.stringify(headers) %>
     </div>
 
-    <script type="module">
-      import { requestProvider } from "https://unpkg.com/webln@0.2.2/dist/webln.min.js"
+    <script src="https://unpkg.com/webln@0.2.2/dist/webln.min.js"></script>
+    <script>
       function enable() {
         WebLN.requestProvider().then(function(webln) {
           webln.getInfo().then(function(info) {
