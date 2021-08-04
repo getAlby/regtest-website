@@ -64,29 +64,21 @@ WebLN.requestProvider().then(function(webln) {
       <%= JSON.stringify(headers) %>
     </div>
 
-    <script src="https://unpkg.com/webln@0.2.2/dist/webln.min.js"></script>
-    <script>
-
-    function enable() {
-      if(!this.webln) {
-        return;
-      }
-      WebLN.requestProvider().then(function(webln) {
-        webln.getInfo().then(function(info) {
-          document.getElementById('getinfo').innerHTML = JSON.stringify(info);
+    <script type="module">
+      import { requestProvider } from "https://unpkg.com/webln@0.2.2/dist/webln.min.js"
+      function enable() {
+        WebLN.requestProvider().then(function(webln) {
+          webln.getInfo().then(function(info) {
+            document.getElementById('getinfo').innerHTML = JSON.stringify(info);
+          });
+        })
+        .catch(function(e) {
+          alert("Failed: " + e.message);
+          console.log('error enable:', e);
         });
-      })
-      .catch(function(e) {
-        alert("Failed: " + e.message);
-        console.log('error enable:', e);
-      });
-
-    }
-    function pay() {
-      if(!this.webln) {
-        return;
       }
-      WebLN.requestProvider()
+      function pay() {
+        WebLN.requestProvider()
           .then(function(webln) {
             return webln.sendPayment('<%= invoice.payment_request %>')
               .then(function(r) {
@@ -102,20 +94,19 @@ WebLN.requestProvider().then(function(webln) {
           alert("Webln error, check console");
           console.log('err, provider', e);
         });
-    }
+      }
 
-    window.addEventListener('DOMContentLoaded', function(event) {
-      window.setTimeout(function() {
+      window.addEventListener('DOMContentLoaded', function(event) {
+        window.setTimeout(function() {
 
-        WebLN.requestProvider().then(webln => {
-          console.log('-- webln found');
-        })
-        .catch(function(e) { console.log('-- requesting webln failed', e) });
+          WebLN.requestProvider().then(webln => {
+            console.log('-- webln found');
+          })
+          .catch(function(e) { console.log('-- requesting webln failed', e) });
 
-      }, 300);
-    });
+        }, 300);
+      });
     </script>
-
 
   </body>
 </html>
