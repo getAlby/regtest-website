@@ -4,9 +4,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const { boltwall, TIME_CAVEAT_CONFIGS } = require("boltwall");
 const nodeFetch = require("node-fetch");
-const passport = require('passport');
-const session = require('express-session');
-const LnurlAuth = require('passport-lnurl-auth');
+// const passport = require('passport');
+// const session = require('express-session');
+// const LnurlAuth = require('passport-lnurl-auth');
 
 require("dotenv").config();
 
@@ -118,25 +118,25 @@ appRouter.get("/webamp", function (req, res) {
   res.render("webamp", {});
 });
 
-appRouter.get('/logout', function(req, res) {
-  req.session.destroy();
-  return res.redirect('/');
-});
+// appRouter.get('/logout', function(req, res) {
+//   req.session.destroy();
+//   return res.redirect('/');
+// });
 
-appRouter.get('/login',
-	function(req, res, next) {
-    console.log('request user', req.user);
-		if (req.user) {
-			// Already authenticated.
-			return res.redirect('/');
-		}
-		next();
-	},
-	new LnurlAuth.Middleware({
-		callbackUrl: 'https://regtest-alice.herokuapp.com/login',
-		cancelUrl: 'https://regtest-alice.herokuapp.com/'
-	})
-);
+// appRouter.get('/login',
+// 	function(req, res, next) {
+//     console.log('request user', req.user);
+// 		if (req.user) {
+// 			// Already authenticated.
+// 			return res.redirect('/');
+// 		}
+// 		next();
+// 	},
+// 	new LnurlAuth.Middleware({
+// 		callbackUrl: 'https://regtest-alice.herokuapp.com/login',
+// 		cancelUrl: 'https://regtest-alice.herokuapp.com/'
+// 	})
+// );
 
 
 lsatRouter.get("/", function (req, res) {
@@ -157,39 +157,39 @@ lsatRouter.get("/files/:name", function (req, res) {
   res.sendFile(fileName, options);
 });
 
-const map = {
-	user: new Map(),
-};
-passport.serializeUser(function(user, done) {
-	done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-	done(null, map.user.get(id) || null);
-});
+// const map = {
+// 	user: new Map(),
+// };
+// passport.serializeUser(function(user, done) {
+// 	done(null, user.id);
+// });
+//
+// passport.deserializeUser(function(id, done) {
+// 	done(null, map.user.get(id) || null);
+// });
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(cors());
-app.use(session({
-	secret: 'skjldsadiufhadiwewdkasdiuc2fdcui',
-	resave: true,
-	saveUninitialized: true,
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LnurlAuth.Strategy(function(linkingPublicKey, done) {
-	let user = map.user.get(linkingPublicKey);
-	if (!user) {
-		user = { id: linkingPublicKey };
-		map.user.set(linkingPublicKey, user);
-	}
+// app.use(session({
+// 	secret: 'skjldsadiufhadiwewdkasdiuc2fdcui',
+// 	resave: true,
+// 	saveUninitialized: true,
+// }));
+// app.use(passport.initialize());
+// app.use(passport.session());
+// passport.use(new LnurlAuth.Strategy(function(linkingPublicKey, done) {
+// 	let user = map.user.get(linkingPublicKey);
+// 	if (!user) {
+// 		user = { id: linkingPublicKey };
+// 		map.user.set(linkingPublicKey, user);
+// 	}
+//
+//   console.log(user);
+// 	done(null, user);
+// }));
 
-  console.log(user);
-	done(null, user);
-}));
-
-app.use(passport.authenticate('lnurl-auth'));
+// app.use(passport.authenticate('lnurl-auth'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
