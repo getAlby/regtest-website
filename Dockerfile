@@ -12,5 +12,5 @@ RUN yarn install
 # Bundle app source
 COPY . .
 
-EXPOSE 8080
+EXPOSE 3030
 CMD [ "node", "fourohtwo.js" ]
