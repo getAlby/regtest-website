@@ -10,6 +10,8 @@ jobs:
       IMAGENAME: ${{ github.event.repository.name }}
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+      name: Check out code
     - name: Docker build
       uses: mr-smithers-excellent/docker-build-push@v5
       with:
