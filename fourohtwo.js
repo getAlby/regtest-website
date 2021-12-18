@@ -170,6 +170,7 @@ lsatRouter.get("/files/:name", function (req, res) {
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(cors());
 // app.use(session({
 // 	secret: 'skjldsadiufhadiwewdkasdiuc2fdcui',
@@ -200,3 +201,4 @@ app.use("/", appRouter);
 const port = process.env.PORT || 3030;
 console.log(`Running on ${port}`);
 app.listen(port);
+
