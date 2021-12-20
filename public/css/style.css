@@ -6,6 +6,7 @@
 
 body{
     width: 100%;
+    height: 90vh;
     position: relative;
 }
 
@@ -53,20 +54,34 @@ body{
 .playground{
     display: flex;
     margin-top: 10vh;
+    height: 100%;
 }
 
 .interaction{
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex: 1;
-    padding: 25px 40px 25px 40px;
+    width: 50%;
 }
 
 .container {
     display: flex;
     flex-direction: column;
     width: 100%;
+    padding: 25px 40px 25px 40px;
+    border-bottom: solid;
+    border-bottom-width: thin;
+}
+
+.webln-sites {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 10px 25px 10px 25px;
+}
+
+.webln-sites > h3{
+    text-align: center;
 }
 
 textarea {
@@ -76,7 +91,7 @@ textarea {
 .buttons{
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .buttons > button {
@@ -94,14 +109,22 @@ textarea {
     cursor: pointer;
 }
 
-.interaction > pre {
+.codedisplay{
     display: flex;
     justify-content: start;
+    border: solid;
+    border-width: thin;
+    padding: 10px
+}
+
+.codedisplay > code{
+    display: flex;
+    margin-left: -90px;
 }
 
 .console{
     display: flex;
-    flex: 1;
+    width: 50%;
     border-left: solid;
     border-width: thin;
     padding: 25px
