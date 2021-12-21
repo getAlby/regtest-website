@@ -34,8 +34,8 @@ body{
 }
 
 .connect{
-    background-color: grey;
-    color: black;
+    background-color: orange;
+    color: white;
     font-size: 16px;
     font-weight: bold;
     height: 40px;
@@ -44,11 +44,11 @@ body{
     border-radius: 5px;
 }
 
-/*
+
 .connect:hover{
     background-color: rgb(255, 182, 47);
     cursor: pointer;
-}*/
+}
 
 /* Playground */
 .playground{
@@ -94,17 +94,27 @@ textarea {
     margin-bottom: 10px;
 }
 
-.buttons > button {
+.pay {
     height: 50px;
+    width: 50%;
     background-color: orange;
     color: white;
     font-size: 16px;
     font-weight: bold;
     border-radius: 5px;
-    flex: 1;
 }
 
-.buttons > button:hover {
+.createinvoice{
+    height: 50px;
+    width: 50%;
+    background-color: grey;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.pay:hover {
     background-color: rgb(255, 182, 47);
     cursor: pointer;
 }
@@ -130,9 +140,22 @@ textarea {
     padding: 25px
 }
 
+.display > ul {
+    list-style-type: none;
+}
+
+.display > ul > li {
+    border-bottom: solid;
+    border-bottom-width: thin;
+    border-color: grey;
+    padding-bottom: 20px;
+    margin-top: 20px;
+}
+
 .display{
     width: 100%;
-    padding: 20px;
+    padding: 0 20px 20px 20px;
     border-radius: 10px;
-    background-color: rgba(192, 225, 238, 0.425)
+    background-color: rgba(192, 225, 238, 0.425);
+    overflow: scroll;
 }

@@ -12,7 +12,7 @@
   <div class="nav">
     <img class="logo" src="/images/albyhead.png"></img>
     <h1>Alby Testing Playground</h1>
-    <button class="connect">Connect</button>
+    <button class="connect" onclick="enable();">Connect</button>
   </div>
   <!-- Main Playground-->
 
@@ -20,11 +20,11 @@
     <div class="interaction">
       <div class="container">
         <div class="buttons">
-          <button onclick="enable();">Connect</button>
-          <button onclick="pay();">Pay</button>
+          <button class="createinvoice">Create Invoice</button>
+          <button class="pay" onclick="pay();">Pay</button>
         </div>
         <pre class="codedisplay">
-          <code>
+         <code>
             WebLN.requestProvider().then(function(webln) {
               webln.getInfo().then(function(info) {
               console.log(info);
@@ -49,21 +49,29 @@
 
     <div class="console">
       <div class="display">
-        <div id="getinfo"></div>
-        <div id="content"></div>
+        <ul id="getinfo"></ul>
       </div>
     </div>
   </div>
 
   <script src="https://unpkg.com/webln@0.2.2/dist/webln.min.js"></script>
   <script>
+    function displayResonse(response) {
+      let newResponse = document.createElement("LI");
+      let pre = document.createElement("PRE");
+      pre.innerHTML = JSON.stringify(response, null, 2);
+      newResponse.appendChild(pre);
+      document.getElementById('getinfo').appendChild(newResponse);
+    }
+
     function enable() {
       WebLN.requestProvider().then(function (webln) {
         webln.getInfo().then(function (info) {
-          document.getElementById('getinfo').innerHTML = JSON.stringify(info);
+          displayResonse(info);
         });
       })
         .catch(function (e) {
+          displayResonse(e);
           alert("Failed: " + e.message);
           console.log('error enable:', e);
         });
@@ -73,10 +81,11 @@
         .then(function (webln) {
           return webln.sendPayment('<%= invoice.payment_request %>')
             .then(function (r) {
-              document.getElementById('content').innerHTML = "YAY, thanks!";
+              displayResonse(r);
               console.log('done', r);
             })
             .catch(function (e) {
+              displayResonse(e);
               alert("Failed: " + e.message);
               console.log('err pay:', e);
             });
