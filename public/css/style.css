@@ -1,0 +1,161 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    width: 100%;
+    height: 90vh;
+    position: relative;
+}
+
+/* Nav bar */
+
+.nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    padding-left: 2em;
+    padding-right: 2em;
+    top: 0;
+    left: 0;
+    height: 10vh;
+    width: 100%;
+    border-bottom: solid;
+    border-bottom-width: thin;
+    background-color: rgb(27, 27, 27);
+    color: white;
+}
+
+.nav > img{
+    height: 100%;
+}
+
+.connect{
+    background-color: orange;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    height: 40px;
+    width: 100px;
+    border: none;
+    border-radius: 5px;
+}
+
+
+.connect:hover{
+    background-color: rgb(255, 182, 47);
+    cursor: pointer;
+}
+
+/* Playground */
+.playground{
+    display: flex;
+    margin-top: 10vh;
+    height: 100%;
+}
+
+.interaction{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 25px 40px 25px 40px;
+    border-bottom: solid;
+    border-bottom-width: thin;
+}
+
+.webln-sites {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 10px 25px 10px 25px;
+}
+
+.webln-sites > h3{
+    text-align: center;
+}
+
+textarea {
+    height: 40vh;
+}
+
+.buttons{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.pay {
+    height: 50px;
+    width: 50%;
+    background-color: orange;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.createinvoice{
+    height: 50px;
+    width: 50%;
+    background-color: grey;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.pay:hover {
+    background-color: rgb(255, 182, 47);
+    cursor: pointer;
+}
+
+.codedisplay{
+    display: flex;
+    justify-content: start;
+    border: solid;
+    border-width: thin;
+    padding: 10px
+}
+
+.codedisplay > code{
+    display: flex;
+    margin-left: -90px;
+}
+
+.console{
+    display: flex;
+    width: 50%;
+    border-left: solid;
+    border-width: thin;
+    padding: 25px
+}
+
+.display > ul {
+    list-style-type: none;
+}
+
+.display > ul > li {
+    border-bottom: solid;
+    border-bottom-width: thin;
+    border-color: grey;
+    padding-bottom: 20px;
+    margin-top: 20px;
+}
+
+.display{
+    width: 100%;
+    padding: 0 20px 20px 20px;
+    border-radius: 10px;
+    background-color: rgba(192, 225, 238, 0.425);
+    overflow: scroll;
+}
