@@ -12,19 +12,18 @@
   <div class="nav">
     <img class="logo" src="/images/albyhead.png"></img>
     <h1>Alby Testing Playground</h1>
-    <button class="connect" onclick="enable();">Connect</button>
+    <button class="connect" onclick="enable();">Enable</button>
   </div>
   <!-- Main Playground-->
-
   <div class="playground">
     <div class="interaction">
       <div class="container">
         <div class="buttons">
-          <button class="createinvoice">Create Invoice</button>
-          <button class="pay" onclick="pay();">Pay</button>
+          <button id="createinvoice" onclick="openInvoiceModal();">Create Invoice</button>
+          <button class="pay" onclick="openPaymentModal();">Pay an Invoice</button>
         </div>
         <pre class="codedisplay">
-         <code>
+          <code>
             WebLN.requestProvider().then(function(webln) {
               webln.getInfo().then(function(info) {
               console.log(info);
@@ -33,7 +32,6 @@
             webln.sendPayment('<%% invoice.payment_request %>');
           </code>
         </pre>
-        
       </div>
       <div class="webln-sites">
         <h3>Other WebLN Sites</h3>
@@ -47,10 +45,52 @@
       </div>
     </div>
 
+    <!-- Right side console display -->
     <div class="console">
       <div class="display">
         <ul id="getinfo"></ul>
       </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="payment-modal">
+      <div class="payment-modal-content">
+        <div class="payment-modal-header">
+          <h2>Choose an Invoice to Pay</h2>
+          <span class="payment-close">&times;</span>
+        </div>
+        <div class="payment-modal-body">
+          <ul class="invoice-list">
+              <li class="invoice-list-item">
+                <span>Label: </span>
+                <span>Amount: </span>
+                <button>Pay</button>
+              </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="invoice-modal">
+      <div class="invoice-modal-content">
+        <div class="invoice-modal-header">
+          <h2>New Invoice</h2>
+          <span class="invoice-close">&times;</span>
+        </div>
+        <div class="invoice-modal-body">
+          <form action="/" method="POST" class="amount">
+            <label></label>
+            <label for="amount">Amount</label>
+            <input
+              class="modal-input" 
+              type="number" 
+              pattern=" 0+\.[0-9]*[1-9][0-9]*$" 
+              name="amount" 
+              onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+            </input>
+            <input class="submit-input" type="submit" value="Submit"></input>
+          </form>
+        </div>
     </div>
   </div>
 
@@ -76,6 +116,7 @@
           console.log('error enable:', e);
         });
     }
+
     function pay() {
       WebLN.requestProvider()
         .then(function (webln) {
@@ -92,6 +133,7 @@
         })
         .catch(function (e) {
           alert("Webln error, check console");
+          displayResonse(e);
           console.log('err, provider', e);
         });
     }
@@ -106,6 +148,49 @@
 
       }, 300);
     });
+
+    // Payment Modal
+
+    let paymentModal = document.getElementById("payment-modal");
+
+    let paymentClose = document.getElementsByClassName("payment-close")[0];
+
+    // When the user clicks on the button, open the modal
+    openPaymentModal = function() {
+      paymentModal.style.display = "block";
+    } 
+
+    // When the user clicks on <span> (x), close the modal
+    paymentClose.onclick = function() {
+        paymentModal.style.display = "none";
+    }
+
+    // Invoice Modal functionality
+
+    let invoiceModal = document.getElementById("invoice-modal");
+
+    let invoiceClose = document.getElementsByClassName("invoice-close")[0];
+
+    // When the user clicks on the button, open the modal
+    openInvoiceModal = function() {
+      invoiceModal.style.display = "block";
+    } 
+
+    // When the user clicks on <span> (x), close the modal
+    invoiceClose.onclick = function() {
+        invoiceModal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == invoiceModal) {
+        invoiceModal.style.display = "none";
+      } else if (event.target == paymentModal) {
+        paymentModal.style.display = "none";
+      }
+    }
+
+
   </script>
 
 </body>

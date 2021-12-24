@@ -10,6 +10,9 @@ const nodeFetch = require("node-fetch");
 
 require("dotenv").config();
 
+let invoices = [];
+let consoleResponses = [];
+
 class Lnd {
   constructor(config) {
     this.config = config;
@@ -201,4 +204,3 @@ app.use("/", appRouter);
 const port = process.env.PORT || 3030;
 console.log(`Running on ${port}`);
 app.listen(port);
-
