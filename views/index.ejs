@@ -50,6 +50,7 @@
       <div class="display">
         <ul id="getinfo"></ul>
       </div>
+      <button id="clear-console" onclick="clearConsole()">Clear Console</button>
     </div>
 
     <!-- Modals -->
@@ -59,15 +60,7 @@
           <h2>Choose an Invoice to Pay</h2>
           <span class="payment-close">&times;</span>
         </div>
-        <div class="payment-modal-body">
-          <ul class="invoice-list">
-              <li class="invoice-list-item">
-                <span>Label: </span>
-                <span>Amount: </span>
-                <button>Pay</button>
-              </li>
-          </ul>
-        </div>
+        <div class="payment-modal-body"></div>
       </div>
     </div>
 
@@ -78,8 +71,14 @@
           <span class="invoice-close">&times;</span>
         </div>
         <div class="invoice-modal-body">
-          <form action="/" method="POST" class="amount">
+          <form action="/invoice" method="POST" class="amount">
             <label></label>
+            <label for="name">Name</label>
+            <input
+              class="modal-input" 
+              type="text" 
+              name="name">
+            </input>
             <label for="amount">Amount</label>
             <input
               class="modal-input" 
@@ -95,56 +94,118 @@
   </div>
 
   <script src="https://unpkg.com/webln@0.2.2/dist/webln.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
   <script>
-    function displayResonse(response) {
-      let newResponse = document.createElement("LI");
-      let pre = document.createElement("PRE");
-      pre.innerHTML = JSON.stringify(response, null, 2);
-      newResponse.appendChild(pre);
-      document.getElementById('getinfo').appendChild(newResponse);
+    function clearConsole() {
+      axios.delete('/console')
+        .then((res) => {
+          showResponses(res.data)
+        })
+        .catch((e) => {
+          console.log("err delete: ", e);
+        })
+    }
+
+    function postConsole(response) {
+      axios.post('/console', { consoleResponse: response })
+        .then((res) => {
+          showResponses(res.data);
+        })
+        .catch((e) => {
+          console.log("err post: ", e);
+        })
+    }
+
+    function showResponses(responses) {
+      document.getElementById('getinfo').innerHTML = ''
+      for(let i = responses.length - 1; i >= 0; i--) {
+        let newResponse = document.createElement("LI");
+        let pre = document.createElement("PRE");
+        pre.innerHTML = JSON.stringify(responses[i], null, 2);
+        newResponse.appendChild(pre);
+        document.getElementById('getinfo').appendChild(newResponse);
+      }
+    }
+
+    function showInvoices(invoices) {
+      let invoiceList = document.createElement("UL");
+      invoiceList.classList.add('invoice-list');
+      invoices.forEach(invoice => {
+        let listItem = document.createElement("LI");
+        listItem.classList.add('invoice-list-item');
+        listItem.innerHTML = `
+        <span>
+          Name: ${invoice.name}
+        </span>
+        <span>
+          Amount: ${invoice.amount}
+        </span>
+        `
+        listItem.addEventListener('click', () => pay(invoice.id, invoice.data.payment_request))
+        invoiceList.appendChild(listItem);
+      });
+      document.getElementsByClassName('payment-modal-body')[0].innerHTML = '';
+      document.getElementsByClassName('payment-modal-body')[0].appendChild(invoiceList);
     }
 
     function enable() {
-      WebLN.requestProvider().then(function (webln) {
-        webln.getInfo().then(function (info) {
-          displayResonse(info);
-        });
-      })
+      WebLN.requestProvider()
+        .then(function (webln) {
+          webln.getInfo().then(function (info) {
+            postConsole(info)
+          });
+        })
         .catch(function (e) {
-          displayResonse(e);
+          postConsole(e)
           alert("Failed: " + e.message);
           console.log('error enable:', e);
         });
     }
 
-    function pay() {
+    function pay(id, payment_request) {
       WebLN.requestProvider()
         .then(function (webln) {
-          return webln.sendPayment('<%= invoice.payment_request %>')
-            .then(function (r) {
-              displayResonse(r);
-              console.log('done', r);
+          return webln.sendPayment(payment_request)
+            .then((r) => {
+              postConsole(r)
             })
-            .catch(function (e) {
-              displayResonse(e);
+            .then(() => {
+              axios.delete(`/invoice/${id}`)
+                .then((res) => {
+                  showInvoices(res.data);
+                })
+                .catch((e) => {
+                  console.log("err delete: ", e);
+                })
+            })
+            .catch((e) => {
+              postConsole(e)
               alert("Failed: " + e.message);
               console.log('err pay:', e);
             });
         })
-        .catch(function (e) {
+        .catch((e) => {
           alert("Webln error, check console");
-          displayResonse(e);
+          postConsole(e)
           console.log('err, provider', e);
         });
     }
 
-    window.addEventListener('DOMContentLoaded', function (event) {
-      window.setTimeout(function () {
+    window.addEventListener('DOMContentLoaded', (event) => {
+      let invoiceArrayString = '<%- JSON.stringify(invoices) %>';
+      let invoiceArray = JSON.parse(invoiceArrayString);
+      showInvoices(invoiceArray);
+
+      let responsesArrayString = '<%- JSON.stringify(consoleResponses) %>';
+      let responsesArray = JSON.parse(responsesArrayString);
+      showResponses(responsesArray)
+      window.setTimeout(() => {
 
         WebLN.requestProvider().then(webln => {
           console.log('-- webln found');
         })
-          .catch(function (e) { console.log('-- requesting webln failed', e) });
+          .catch((e) => { console.log('-- requesting webln failed', e) });
 
       }, 300);
     });
@@ -178,7 +239,7 @@
 
     // When the user clicks on <span> (x), close the modal
     invoiceClose.onclick = function() {
-        invoiceModal.style.display = "none";
+      invoiceModal.style.display = "none";
     }
 
     // When the user clicks anywhere outside of the modal, close it
