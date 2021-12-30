@@ -12,7 +12,7 @@ $ git clone https://github.com/getAlby/regtest-website.git
 $ cd regtest-website
 $ yarn install
 $ cp .env.example .env
-# edit .env or set a `LND_URL` and `LND_MACAROON_HEX` environment variable
+# edit .env and set a `LND_URL` and `LND_MACAROON_HEX` environment variable
 $ node fourohtwo.js
 $ open http://localhost:3030
 ```
