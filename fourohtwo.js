@@ -1,5 +1,6 @@
 const path = require("path");
 const express = require("express");
+const uuid = require('uuid');
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { boltwall, TIME_CAVEAT_CONFIGS } = require("boltwall");
@@ -104,14 +105,29 @@ const app = express();
 const lsatRouter = express.Router();
 const appRouter = express.Router();
 
+let newInvoice = null;
+
 appRouter.get("/", async function (req, res) {
-  const invoice = await lnd.makeInvoice({ amount: 100, memo: "a402" });
-  res.render("index", { invoice: invoice.data, headers: req.headers, user: req.user });
+  res.render("index", { newInvoice, headers: req.headers, user: req.user });
+  if (newInvoice) {
+    newInvoice = null
+  }
 });
 
+// invoice calls
+
 appRouter.post("/invoice", async function (req, res) {
-  const invoice = await lnd.makeInvoice({ amount: 100, memo: "a402" });
-  res.json({ payment_request: invoice.data.payment_request });
+  if (req.body.amount && req.body.name) {
+    const invoice = await lnd.makeInvoice({ amount: req.body.amount, memo: "a402" });
+    const newInvoiceObj = {
+      id: uuid.v4(),
+      name: req.body.name,
+      amount: req.body.amount,
+      data: invoice.data
+    }
+    newInvoice = newInvoiceObj;
+  }
+  res.redirect('/');
 });
 
 appRouter.get("/webamp", function (req, res) {
@@ -201,4 +217,3 @@ app.use("/", appRouter);
 const port = process.env.PORT || 3030;
 console.log(`Running on ${port}`);
 app.listen(port);
-
