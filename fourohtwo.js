@@ -9,9 +9,6 @@ const nodeFetch = require("node-fetch");
 // const session = require('express-session');
 // const LnurlAuth = require('passport-lnurl-auth');
 
-let invoices = require("./data/invoices");
-let consoleResponses = require("./data/consoleResponses");
-
 require("dotenv").config();
 
 class Lnd {
@@ -108,44 +105,30 @@ const app = express();
 const lsatRouter = express.Router();
 const appRouter = express.Router();
 
-appRouter.get("/", async function (req, res) {
-  res.render("index", { invoices, consoleResponses, headers: req.headers, user: req.user });
+let newInvoice = null;
 
+appRouter.get("/", async function (req, res) {
+  res.render("index", { newInvoice, headers: req.headers, user: req.user });
+  if (newInvoice) {
+    newInvoice = null
+  }
 });
 
 // invoice calls
 
-appRouter.delete("/invoice/:id", function(req, res) {
-  invoices = invoices.filter(invoice => invoice.id !== req.params.id);
-  res.json(invoices);
-})
-
 appRouter.post("/invoice", async function (req, res) {
-  const invoice = await lnd.makeInvoice({ amount: req.body.amount, memo: "a402" });
-  consoleResponses.push(invoice);
-  const newInvoice = {
-    id: uuid.v4(),
-    name: req.body.name,
-    amount: req.body.amount,
-    data: invoice.data
+  if (req.body.amount && req.body.name) {
+    const invoice = await lnd.makeInvoice({ amount: req.body.amount, memo: "a402" });
+    const newInvoiceObj = {
+      id: uuid.v4(),
+      name: req.body.name,
+      amount: req.body.amount,
+      data: invoice.data
+    }
+    newInvoice = newInvoiceObj;
   }
-  console.log(newInvoice);
-  invoices.push(newInvoice);
-  res.redirect("/");
-  //res.json({ payment_request: invoice.data.payment_request });
+  res.redirect('/');
 });
-
-// console calls
-
-appRouter.post("/console", function (req, res) {
-  consoleResponses.push(req.body.consoleResponse);
-  res.json(consoleResponses);
-});
-
-appRouter.delete("/console", function (req, res) {
-  consoleResponses = [];
-  res.json(consoleResponses);
-})
 
 appRouter.get("/webamp", function (req, res) {
   res.render("webamp", {});

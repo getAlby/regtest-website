@@ -75,19 +75,25 @@
             <label></label>
             <label for="name">Name</label>
             <input
+              id="invoice-name"
               class="modal-input" 
               type="text" 
               name="name">
             </input>
             <label for="amount">Amount</label>
             <input
+              id="invoice-value"
               class="modal-input" 
               type="number" 
               pattern=" 0+\.[0-9]*[1-9][0-9]*$" 
               name="amount" 
               onkeypress="return event.charCode >= 48 && event.charCode <= 57">
             </input>
-            <input class="submit-input" type="submit" value="Submit"></input>
+            <input 
+              class="submit-input" 
+              type="submit" 
+              value="Submit">
+            </input>
           </form>
         </div>
     </div>
@@ -97,24 +103,19 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
   <script>
+
+    // Console functions
     function clearConsole() {
-      axios.delete('/console')
-        .then((res) => {
-          showResponses(res.data)
-        })
-        .catch((e) => {
-          console.log("err delete: ", e);
-        })
+      let consoleResponses = [];
+      window.sessionStorage.setItem('consoleResponses', JSON.stringify(consoleResponses));
+      showResponses(consoleResponses);
     }
 
     function postConsole(response) {
-      axios.post('/console', { consoleResponse: response })
-        .then((res) => {
-          showResponses(res.data);
-        })
-        .catch((e) => {
-          console.log("err post: ", e);
-        })
+      let consoleResponses = JSON.parse(window.sessionStorage.getItem('consoleResponses'));
+      consoleResponses.push(response);
+      showResponses(consoleResponses);
+      window.sessionStorage.setItem('consoleResponses', JSON.stringify(consoleResponses));
     }
 
     function showResponses(responses) {
@@ -126,6 +127,41 @@
         newResponse.appendChild(pre);
         document.getElementById('getinfo').appendChild(newResponse);
       }
+    }
+
+    // Invoice functions
+
+    function postInvoice(invoice) {
+      let invoices = JSON.parse(window.sessionStorage.getItem('invoices'));
+      invoices.push(invoice);
+      showInvoices(invoices)
+      window.sessionStorage.setItem('invoices', JSON.stringify(invoices)); 
+    }
+
+    function pay(id, payment_request) {
+      WebLN.requestProvider()
+        .then(function (webln) {
+          return webln.sendPayment(payment_request)
+            .then((r) => {
+              postConsole(r)
+            })
+            .then(() => {
+              let invoices = JSON.parse(window.sessionStorage.getItem('invoices'))
+              invoices = invoices.filter(invoice => invoice.id !== id);
+              showInvoices(invoices);
+              window.sessionStorage.setItem('invoices', JSON.stringify(invoices));
+            })
+            .catch((e) => {
+              postConsole(e)
+              alert("Failed: " + e.message);
+              console.log('err pay:', e);
+            });
+        })
+        .catch((e) => {
+          alert("Webln error, check console");
+          postConsole(e)
+          console.log('err, provider', e);
+        });
     }
 
     function showInvoices(invoices) {
@@ -163,43 +199,27 @@
         });
     }
 
-    function pay(id, payment_request) {
-      WebLN.requestProvider()
-        .then(function (webln) {
-          return webln.sendPayment(payment_request)
-            .then((r) => {
-              postConsole(r)
-            })
-            .then(() => {
-              axios.delete(`/invoice/${id}`)
-                .then((res) => {
-                  showInvoices(res.data);
-                })
-                .catch((e) => {
-                  console.log("err delete: ", e);
-                })
-            })
-            .catch((e) => {
-              postConsole(e)
-              alert("Failed: " + e.message);
-              console.log('err pay:', e);
-            });
-        })
-        .catch((e) => {
-          alert("Webln error, check console");
-          postConsole(e)
-          console.log('err, provider', e);
-        });
-    }
-
     window.addEventListener('DOMContentLoaded', (event) => {
-      let invoiceArrayString = '<%- JSON.stringify(invoices) %>';
-      let invoiceArray = JSON.parse(invoiceArrayString);
-      showInvoices(invoiceArray);
+      let invoices, consoleResponses;
+      if (window.sessionStorage.getItem('invoices') && window.sessionStorage.getItem('consoleResponses')) {
+        invoices = JSON.parse(window.sessionStorage.getItem('invoices'));
+        consoleResponses = JSON.parse(window.sessionStorage.getItem('consoleResponses'));
+      } else {
+        invoices = [];
+        consoleResponses = [];
+        window.sessionStorage.setItem('invoices', JSON.stringify(invoices));
+        window.sessionStorage.setItem('consoleResponses', JSON.stringify(consoleResponses));
+      }
 
-      let responsesArrayString = '<%- JSON.stringify(consoleResponses) %>';
-      let responsesArray = JSON.parse(responsesArrayString);
-      showResponses(responsesArray)
+      let newInvoice = '<%- JSON.stringify(newInvoice) %>';
+      newInvoice = JSON.parse(newInvoice);
+      if (newInvoice) {
+        postInvoice(newInvoice);
+        postConsole(newInvoice);
+      } else {
+        showInvoices(invoices);
+        showResponses(consoleResponses)
+      }
       window.setTimeout(() => {
 
         WebLN.requestProvider().then(webln => {
